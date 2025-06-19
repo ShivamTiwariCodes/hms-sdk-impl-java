@@ -3,33 +3,13 @@ plugins {
 }
 
 version = '1.0.0'
-group = 'com.hms.sdk.core'
+group = 'com.hms.sdk.impl'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
     withJavadocJar()
     withSourcesJar()
-}
-
-tasks.register('copyJarToOpt') {
-    dependsOn build
-    doLast {
-        def destinations = [
-                "../spring-temporal-worker/libs/",
-                "libs/"
-        ]
-
-        destinations.each { path ->
-            def destDir = file(path)
-            destDir.mkdirs()
-            copy {
-                from jar.archiveFile
-                into destDir
-            }
-            println "JAR copied to: ${destDir.absolutePath}"
-        }
-    }
 }
 
 repositories {
@@ -40,14 +20,37 @@ dependencies {
     implementation files('libs/hms-core-sdk.jar')
 }
 
+tasks.register('copyJarToMultipleDirs') {
+    dependsOn jar // Ensure jar is built first
+
+    doLast {
+        def jarFile = tasks.named('jar').get().archiveFile.get().asFile
+        def destinations = [
+                "../spring-temporal-worker/libs/"
+        ]
+
+        destinations.each { path ->
+            def destDir = file(path)
+            destDir.mkdirs()
+            copy {
+                from jarFile
+                into destDir
+            }
+            println "Copied to: ${new File(destDir, jarFile.name).absolutePath}"
+        }
+    }
+}
+
+
+
 jar {
     manifest {
         attributes(
-            'Implementation-Title': 'Custom Handler Hosp1',
+            'Implementation-Title': 'HMS SDK implementation',
             'Implementation-Version': version
         )
     }
     archiveBaseName.set("hms-sdk-impl")
     archiveVersion.set("") // no version in name
-    destinationDirectory.set(file("../spring-temporal-worker/libs/"))
+    destinationDirectory.set(file("build/libs/"))
 }

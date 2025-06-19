@@ -48,5 +48,5 @@ Make sure hms-core-sdk.jar is available in the lib/ directory. Gradle loads it a
 # Build the JAR
 ./gradlew build
 
-# Copy to external folder (optional)
-./gradlew copyJarToOpt
+# Copy to external folder
+./gradlew copyJarToMultipleDirs
