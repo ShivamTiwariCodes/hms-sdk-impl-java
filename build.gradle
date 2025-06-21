@@ -26,7 +26,8 @@ tasks.register('copyJarToMultipleDirs') {
     doLast {
         def jarFile = tasks.named('jar').get().archiveFile.get().asFile
         def destinations = [
-                "../spring-temporal-worker/libs/"
+                "../spring-temporal-worker/libs/",
+                "../hms-core-java/libs/"
         ]
 
         destinations.each { path ->
